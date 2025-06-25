@@ -1,0 +1,14 @@
+# Ignorar entornos virtuales
+venv/
+
+# Archivos temporales
+__pycache__/
+*.py[cod]
+
+# Modelos y archivos pesados
+*.h5
+*.pkl
+
+# Otros
+.DS_Store
+.vscode/
