@@ -9,4 +9,4 @@ pydantic~=2.11.7
 SQLAlchemy~=2.0.41
 python-dotenv~=1.1.1
 psycopg2-binary
-opencv-python
+opencv-python-headless
