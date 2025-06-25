@@ -7,7 +7,7 @@ from app.db import crud
 
 router = APIRouter()
 
-# Dependency
+
 def get_db():
     db = SessionLocal()
     try:

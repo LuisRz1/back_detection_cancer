@@ -51,10 +51,10 @@ def predict(image_bytes: bytes, metadata: dict) -> dict:
 
     age = metadata['age']
     gender = encode_gender(metadata['gender'])
-    lesion_area = one_hot_area(metadata['lesionArea'])  # np.array de 15 elementos
+    lesion_area = one_hot_area(metadata['lesionArea'])
 
     # CORREGIDO
-    meta_input = np.array([[age, gender, *lesion_area]])  # ✅ Desempaqueta el array
+    meta_input = np.array([[age, gender, *lesion_area]])
 
     preds = model.predict([img_input, meta_input])[0]
     pred_idx = np.argmax(preds)
