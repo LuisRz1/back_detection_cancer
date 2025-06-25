@@ -1,6 +1,5 @@
 from fastapi import APIRouter, UploadFile, Form, File, Depends
 from sqlalchemy.orm import Session
-
 from app.model.model_loader import predict
 from app.schemas.schemas import SkinAnalysisResult
 from app.db.database import SessionLocal
@@ -26,6 +25,7 @@ async def analyze_skin(
     lesionArea: str = Form(...),
     db: Session = Depends(get_db)
 ):
+    # Leer la imagen original en bytes
     image_bytes = await file.read()
 
     metadata = {
@@ -34,27 +34,18 @@ async def analyze_skin(
         "lesionArea": lesionArea
     }
 
+    # Ejecutar la predicción
     result = predict(image_bytes, metadata)
 
-    # Guardar en base de datos
+    # Guardar en la base de datos solo los campos solicitados
     crud.save_analysis(db, {
         "first_name": firstName,
         "last_name": lastName,
         "age": age,
         "gender": gender,
-        "lesionArea": lesionArea,
+        "lesion_area": lesionArea,
         "diagnosis": result["diagnosis"],
-        "confidence": result["confidence"]
+        "image": image_bytes  # guarda el binario original
     })
 
-    # Construir respuesta completa
-    return {
-        "diagnosis": result["diagnosis"],
-        "confidence": result["confidence"],
-        "findings": f"Lesión clasificada como {result['diagnosis'].upper()} con {result['confidence']:.2%} de confianza.",
-        "recommendations": ["Consultar dermatólogo", "Evitar exposición solar directa"],
-        "urgency": "routine",
-        "nextSteps": ["Agendar cita médica", "Monitoreo de evolución"],
-        "diagnosisName": result["diagnosis"].upper(),
-        "description": f"{result['diagnosis'].upper()} es una categoría identificada automáticamente. Se recomienda confirmación médica."
-    }
+    return result

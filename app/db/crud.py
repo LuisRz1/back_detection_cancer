@@ -1,16 +1,14 @@
-from sqlalchemy.orm import Session
-from .models import SkinAnalysis
+from app.db import models
 
-def save_analysis(db: Session, data: dict):
-    analysis = SkinAnalysis(
+def save_analysis(db, data: dict):
+    analysis = models.SkinAnalysis(
         first_name=data["first_name"],
         last_name=data["last_name"],
         age=data["age"],
         gender=data["gender"],
-        lesion_area=data["lesionArea"],
+        lesion_area=data["lesion_area"],
         diagnosis=data["diagnosis"],
-        confidence=data["confidence"],
-        urgency=data["urgency"]
+        image=data["image"]
     )
     db.add(analysis)
     db.commit()

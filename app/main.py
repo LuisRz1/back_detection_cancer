@@ -17,4 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Incluir rutas
 app.include_router(api_router)
+
+# Ruta raíz
+@app.get("/")
+def read_root():
+    return {"message": "Backend de detección de cáncer dermatológico activo."}
