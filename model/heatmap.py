@@ -10,26 +10,9 @@ def preprocess_image(image_bytes: bytes) -> np.ndarray:
     img = img.resize((224, 224))
     return np.array(img)
 
-def generate_gradcam(model, img_array: np.ndarray, layer_name: str = "conv5_block3_out"):
-    # Preprocess for model
-    x = img_array / 255.0
-    x = np.expand_dims(x, axis=0)
-
-    grad_model = Model(
-        [model.inputs], [model.get_layer(layer_name).output, model.output]
-    )
-
-    with tf.GradientTape() as tape:
-        conv_outputs, predictions = grad_model(x)
-        class_idx = tf.argmax(predictions[0])
-        loss = predictions[:, class_idx]
-
-    grads = tape.gradient(loss, conv_outputs)[0]
-    pooled_grads = tf.reduce_mean(grads, axis=(0, 1))
-    conv_outputs = conv_outputs[0]
-
-    heatmap = tf.reduce_sum(tf.multiply(pooled_grads, conv_outputs), axis=-1)
-    heatmap = np.maximum(heatmap, 0)
-    heatmap /= tf.math.reduce_max(heatmap)
-    heatmap = cv2.resize(heatmap.numpy(), (224, 224))
-    return heatmap
+def generate_pseudo_heatmap(img_array: np.ndarray) -> np.ndarray:
+    img_resized = cv2.resize(img_array, (224, 224))
+    gray = cv2.cvtColor(img_resized, cv2.COLOR_RGB2GRAY)
+    heatmap = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
+    superpuesto = cv2.addWeighted(img_resized, 0.6, heatmap, 0.4, 0)
+    return superpuesto

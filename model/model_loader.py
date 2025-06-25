@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from .heatmap import preprocess_image, generate_gradcam
+from .heatmap import preprocess_image, generate_pseudo_heatmap
 
 CLASSES = ['nv', 'mel', 'bkl', 'bcc', 'akiec', 'vasc', 'df']
 
@@ -15,7 +15,7 @@ def encode_area(area: str) -> int:
 
 def predict(image_bytes: bytes, metadata: dict) -> dict:
     image_array = preprocess_image(image_bytes)
-    heatmap = generate_gradcam(model, image_array)
+    heatmap = generate_pseudo_heatmap(image_array)
 
     # Combine heatmap + metadata into final input
     flat_image = heatmap.flatten()
