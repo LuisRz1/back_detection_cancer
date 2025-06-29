@@ -1,23 +1,30 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.db import models
-from app.db.database import engine
+
+# Rutas de la API
 from app.api import router as api_router
 
-models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
 
-# Middleware CORS
+# Inicializar FastAPI
+app = FastAPI(
+    title="Skin Analysis API",
+    description="API para detección de cáncer de piel",
+    version="1.0.0",
+    docs_url="/docs",  # Habilita Swagger
+    redoc_url="/redoc"  # Habilita ReDoc
+)
+
+# Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],            # Puedes limitar esto a dominios específicos en producción
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Incluir rutas
+# Registrar rutas
 app.include_router(api_router)
 
 # Ruta raíz
