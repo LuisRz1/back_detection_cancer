@@ -57,5 +57,7 @@ async def analyze_skin(
 
     except Exception as e:
         import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Error al procesar la predicción: {str(e)}")
+        error_msg = f"[ERROR API] {str(e)}"
+        print(error_msg)  # visible en Railway
+        traceback.print_exc()  # si Railway captura stdout
+        raise HTTPException(status_code=500, detail=error_msg)
